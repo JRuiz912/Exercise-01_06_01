@@ -70,7 +70,7 @@ function autoCheckCustom(){
     
    // textarea has message, check the box
    if (messageBox.value !== "" && messageBox.value !== messageBox.placeholder){
-       
+       document.getElementById("custom").checked = "checked";
    }
 
    // textare has no message, uncheck the box
@@ -81,6 +81,30 @@ function autoCheckCustom(){
 
 }
 
+//
+function copyBillingAddress(){
+    var billingInputElement = document.querySelectorAll("#billingAddress input");
+    var deliveryInputElement = document.querySelectorAll("#deliveryAddress input");
+
+    //duplicate address- checked box is checked - copy 
+    if(document.getElementById("sameAddr").checked){
+        for(var i = 0; i < billingInputElement.length; i++){
+            deliveryInputElement[i + 1].value = 
+            billingInputElement[i].value;
+        }
+        document.querySelector("#deliveryAddress select").value = 
+        document.querySelector("#billingAddress select").value;
+    }
+
+    // duplicate adrress - checkbox not chekced - erase
+    else{
+        for(var i = 0; i < billingInputElement.length; i++){
+            deliveryInputElement[i + 1].value = ""; 
+        }
+        document.querySelector("#deliveryAddress select").selecetedIndex = -1;
+    }
+
+}
 
 // fucntion that sets up pag eon load event 
 function setUpPage(){
@@ -109,6 +133,13 @@ function createEventListeners(){
         messageBox.addEventListener("change", autoCheckCustom)
     }else if (messageBox.attachEvent){
         messageBox.attachEvent("onchange", autoCheckCustom);
+    
+   }
+   var same = document.getElementById("sameAddr");
+    if (same.addEventListener){
+        same.addEventListener("change", copyBillingAddress, false);
+    }else if (same.attachEvent){
+        same.attachEvent("onchange", copyBillingAddress);
     
    }
 }   
