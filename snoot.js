@@ -12,9 +12,10 @@ Date: 8/6/18
 var twentyNine = document.createDocumentFragment();
 var thirty = document.createDocumentFragment();
 var thirtyOne = document.createDocumentFragment();
+var formValidity = true;  
 
-//fuction to remove selcet list defaults 
- 
+
+//fuction to remove selcet list defaults
 function removeSelectDefaults(){
     var emptyBoxes = document.getElementsByTagName("select");
    for(var i = 0; i < emptyBoxes.lenght; i++){
@@ -106,6 +107,51 @@ function copyBillingAddress(){
 
 }
 
+//fuction to validate addresses - billing and delivery 
+function validateAddress(fieldsetId){
+    var inputElement = document.querySelectorAll("#" + fieldsetId + " input");
+    var errorDiv = document.querySelectorAll("#" + fieldsetId + " .errorMessage")[0];
+    var fieldsetValidity = true; 
+    var elementCount = inputElements.lenght;
+    var currentElement;
+    try{
+        alert("i and executing the try clasue")
+    }
+    catch(msg){
+        errorDiv.style.display = block; 
+        errorDiv.innerHTML = msg; 
+        formValidity = false;
+    }
+}
+
+
+//function to vaidate entier formValidatiy
+function validateForm(evt){
+    if(evt.preventDefault){
+        evt.preventDefault();
+    }
+    else{
+        evt.returnValue = false;
+    }
+    formValidity = true;
+
+    validateAddress("billingAddress");
+    validateAddress("diliveryAddress");
+
+    //Form is valid
+    if(formValidity === true){
+        document.getElementById("errorText").innerHTML = "";
+        document.getElementById("errorText").style.display= "none";
+        document.getElementsByTagName("form")[0].submit();
+    }
+    else{
+        document.getElementById("errorText").innerHTML = "Please fix the indicated problems and then resubmit your order";
+        document.getElementById("errorText").style.display = "block";
+        scroll (0,0);
+    }
+}
+
+
 // fucntion that sets up pag eon load event 
 function setUpPage(){
     removeSelectDefaults();   
@@ -140,9 +186,16 @@ function createEventListeners(){
         same.addEventListener("change", copyBillingAddress, false);
     }else if (same.attachEvent){
         same.attachEvent("onchange", copyBillingAddress);
-    
    }
+
+   var form = document.getElementsByTagName("form")[0];
+    if (form.addEventListener){
+       form.addEventListener("submit", validateForm, false);
+    }else if (form.attachEvent){
+        form.attachEvent("onsubmit", validateForm);
+    }
 }   
+
 
 
 //page load event handlers 
