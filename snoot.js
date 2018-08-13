@@ -27,8 +27,8 @@ function removeSelectDefaults(){
 function setUpDays(){
   var dates = document.getElementById("delivDy").getElementsByTagName("option");
   twentyNine.appendChild(dates[28].cloneNode(true));
-  thirty.appendChild(dates[28].cloneNode(true));
   thirty.appendChild(dates[29].cloneNode(true));
+  thirty.appendChild(dates[28].cloneNode(true));
   thirtyOne.appendChild(dates[28].cloneNode(true));
   thirtyOne.appendChild(dates[29].cloneNode(true));
   thirtyOne.appendChild(dates[30].cloneNode(true));
@@ -115,7 +115,46 @@ function validateAddress(fieldsetId){
     var elementCount = inputElements.lenght;
     var currentElement;
     try{
-        alert("i and executing the try clasue")
+        //loop through input fields looking for blanksss
+        for (var i = 0; i < elementCount; i++){
+            currentElement = inputElement[i]
+            //blanks
+
+            if(currentElement.value === ""){
+                debugger; 
+                currentElement.style.background = "rgb (255,233,233";
+                fieldsetValidity = false;
+            }
+            // not blanks
+            else {
+                currentElement.style.background = "white";
+            }
+            else{
+                currentElement.style.border = "";
+    
+            }
+        }
+      
+
+        // validate selected list feild 
+        currentElement = document.querySelectorAll("#" fieldsetId + " select")[0];
+        if (currentElement.selecetedIndex === -1){
+            currentElement.style.border = "1px solid red";
+            fieldsetValidity = false;
+        }
+        // action for invalid field set
+        if (fieldsetValidity === false){
+            if(fieldsetId === "billingAddress"){
+                throw" please complete all billing addres information"
+            }
+            else {
+                throw "please complete all delivery address information "
+            }
+        }
+        else{
+            errorDiv.style.display = "none";
+            errorDiv.innerHTML = "";
+        }
     }
     catch(msg){
         errorDiv.style.display = block; 
