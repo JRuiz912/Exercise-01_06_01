@@ -8,7 +8,6 @@ Date: 8/6/18
 */
 
 "use strict";
-
 var twentyNine = document.createDocumentFragment();
 var thirty = document.createDocumentFragment();
 var thirtyOne = document.createDocumentFragment();
@@ -18,7 +17,7 @@ var formValidity = true;
 //fuction to remove selcet list defaults
 function removeSelectDefaults(){
     var emptyBoxes = document.getElementsByTagName("select");
-   for(var i = 0; i < emptyBoxes.lenght; i++){
+   for(var i = 0; i < emptyBoxes.length; i++){
        emptyBoxes[i].selectedIndex = -1;
    }
 }
@@ -41,6 +40,10 @@ function updateDays(){
     var dates = deliveryDay.getElementsByTagName("option");
     var deliveryMonth = document.getElementById("delivMo");
     var deliveryYear = document.getElementById("delivYr");
+// cover for no month selected 
+    if(deliveryMonth.selecetedIndex === -1){
+        return;
+    }
     var selectedMonth = 
     deliveryMonth.options[deliveryMonth.selectedIndex].value;
     while(dates[28]){
@@ -67,7 +70,7 @@ function updateDays(){
 
 //FUNCTION TO inspect custom check box on message change
 function autoCheckCustom(){
-    var messageBox = document.getElementById(customText);
+    var messageBox = document.getElementById("customText");
     
    // textarea has message, check the box
    if (messageBox.value !== "" && messageBox.value !== messageBox.placeholder){
@@ -112,32 +115,24 @@ function validateAddress(fieldsetId){
     var inputElement = document.querySelectorAll("#" + fieldsetId + " input");
     var errorDiv = document.querySelectorAll("#" + fieldsetId + " .errorMessage")[0];
     var fieldsetValidity = true; 
-    var elementCount = inputElements.lenght;
+    var elementCount = inputElement.length;
     var currentElement;
     try{
         //loop through input fields looking for blanksss
         for (var i = 0; i < elementCount; i++){
             currentElement = inputElement[i]
             //blanks
-
             if(currentElement.value === ""){
-                debugger; 
-                currentElement.style.background = "rgb (255,233,233";
+                currentElement.style.background = "rgb(255,233,233)";
                 fieldsetValidity = false;
             }
             // not blanks
             else {
-                currentElement.style.background = "white";
-            }
-            else{
-                currentElement.style.border = "";
-    
+                currentElement.style.border = "white";
             }
         }
-      
-
         // validate selected list feild 
-        currentElement = document.querySelectorAll("#" fieldsetId + " select")[0];
+        currentElement = document.querySelectorAll("#" + fieldsetId + " select") ;
         if (currentElement.selecetedIndex === -1){
             currentElement.style.border = "1px solid red";
             fieldsetValidity = false;
@@ -156,8 +151,52 @@ function validateAddress(fieldsetId){
             errorDiv.innerHTML = "";
         }
     }
+    catch (msg){
+        errorDiv.style.display = "block"; 
+        errorDiv.innerHTML = msg; 
+        formValidity = false;
+    }
+}
+
+// function to validate delivery date
+function validatePayment(){
+    var errorDiv = document.querySelectorAll(" #deliveryDate" + " .errorMessage")[0];
+    var fieldsetValidity = true; 
+    var ccNumElement = document.getElementById("ccNum");
+    var selectElement = document.querySelectorAll("#paymentInfo" + select);
+    var elementCount = selectElement.length;
+    var cvvElement = document
+.getElementById("cvv");
+var cards = document.getElementsByName("paymentType")
+    var currentElement;
+
+    // where we left off 
+    try{
+        //loop through input fields looking for blanksss
+        for (var i = 0; i < elementCount; i++){
+            currentElement = selectElement[i];
+            //blanks
+
+            if(currentElement.selecetedIndex === -1){
+                currentElement.style.border = "1px solid red ";
+                fieldsetValidity = false;
+            }
+            // not blanks
+            else {
+                currentElement.style.border = "";
+            }
+        }
+        // action for invalid field set
+        if (fieldsetValidity === false){
+            throw "please specify a delivery date"
+        }
+        else{
+            errorDiv.style.display = "none";
+            errorDiv.innerHTML = "";
+        }
+    }
     catch(msg){
-        errorDiv.style.display = block; 
+        errorDiv.style.display = "block"; 
         errorDiv.innerHTML = msg; 
         formValidity = false;
     }
@@ -175,7 +214,8 @@ function validateForm(evt){
     formValidity = true;
 
     validateAddress("billingAddress");
-    validateAddress("diliveryAddress");
+    validateAddress("deliveryAddress");
+    validateDeliveryDate();
 
     //Form is valid
     if(formValidity === true){
