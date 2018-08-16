@@ -159,65 +159,17 @@ function validateAddress(fieldsetId){
 }
 
 
-function validateAddress(fieldsetId){
-    var inputElement = document.querySelectorAll("#deliveryDate" + " input");
-    var errorDiv = document.querySelectorAll("#deliveryDate" + " .errorMessage")[0];
-    var fieldsetValidity = true; 
-    var elementCount = inputElement.length;
-    var currentElement;
-    try{
-        //loop through input fields looking for blanksss
-        for (var i = 0; i < elementCount; i++){
-            currentElement = inputElement[i]
-            //blanks
-            if(currentElement.value === "-1"){
-                currentElement.style.background = "1px solid red";
-                fieldsetValidity = false;
-            }
-            // not blanks
-            else {
-                currentElement.style.border = "";
-            }
-        }
-        // validate selected list feild 
-        currentElement = document.querySelectorAll("#" + fieldsetId + " select") ;
-        if (currentElement.selecetedIndex === -1){
-            currentElement.style.border = "1px solid red";
-            fieldsetValidity = false;
-        }
-        // action for invalid field set
-        if (fieldsetValidity === false){
-            if(fieldsetId === "billingAddress"){
-                throw" please complete all billing addres information"
-            }
-            else {
-                throw "please complete all delivery address information "
-            }
-        }
-        else{
-            errorDiv.style.display = "none";
-            errorDiv.innerHTML = "";
-        }
-    }
-    catch (msg){
-        errorDiv.style.display = "block"; 
-        errorDiv.innerHTML = msg; 
-        formValidity = false;
-    }
-}
-
-
 // function to validate delivery date
 function validateDeliveryDate(){
     var errorDiv = document.querySelectorAll(" #paymentInfo" + " .errorMessage")[0];
-    var fieldsetValidity = false; 
+    var fieldsetValidity = true; 
     var ccNumElement = document.getElementById("ccNum");
     var selectElement = document.querySelectorAll("#paymentInfo" + "select");
+    var cvvNumEle = document.getElementById("cvv");
+    var cards = document.getElementById("paymentType")
     var elementCount = selectElements.length;
- 
     var currentElement;
 
-    // where we left off 
     try{
         //validate radio button 
         if(!cards[0].checked && !cards[2].checked && !cards[3].checked){
@@ -242,7 +194,7 @@ function validateDeliveryDate(){
     }
     catch(msg){
         errorDiv.style.display = "block"; 
-        errorDiv.innerHTML = msg; 
+        errorDiv.innerHTML = msg;   
         formValidity = false;
     }
 }
@@ -269,15 +221,8 @@ var cards = document.getElementsByName("paymentType");
             }
             fieldsetValidity = false;
         }
-        else{
-            for (var i =0; i < cards.length; i++){
-                cards[i].style.outline = "";
-        }
-        }
-
         if(ccNumElement.value === ""){
             ccNumElement.style.background = "rgb(255, 233, 233)";
-            formValidity = false 
         }
         else {
             ccNumElement.style.borderColor = white;
@@ -306,6 +251,7 @@ function validateMessage(){
 
 
 try{
+
        //validate checkbox and text are custom message
        if(document.getElementById("custom").checked && (msgBox.value === "" || msgBox.value === placeholder)){
            throw "please enter your custom message text." ;
@@ -324,6 +270,57 @@ try{
 }
 
 
+function validateCreateAccount(){
+    var msgBox = document.getElementById("customText");
+    var errorDiv = document.querySelectorAll("#createAccount" + " .errorMessage")[0];
+    var usernameElement = document.getElementById("username");
+    var element1Element =document.getElementById("pass1");
+    var element2Element =document.getElementById("pass2");
+    var invColor = "rgb(255,233,233)";
+    var passwordMismatch = false;
+    var fieldsetValidity = true;
+    usernameElement.style.background = "white";
+    pass1Element.style.background = "white";
+    pass2Element.style.background = "white";
+    errorDiv.style.display = "none"; 
+    errorDiv.innerHTML = ""; 
+
+
+
+
+try{
+    if(usernameElement.value !== "" && pass1Element.value !== "" && pass2Element.value !== ""){
+        //one or more feilds has data
+        if (pass1Element.value !== pass2Element.value){// verify password match
+            fieldsetValidity = false;
+            passwordMismatch = true;
+            throw "password entered do not match, please re-enter. ";
+        }
+    }
+    else if (usernameElement.value !== "" && pass1Element.value !== "" && pass2Element.value !== ""){
+        fieldsetValidity = true;
+        passwordMismatch = false;
+    }
+    else{
+        fieldsetValidity = false;
+        throw "please enter all field to create account"
+    }
+}
+    catch(msg){
+        errorDiv.style.display = "block"; 
+        errorDiv.innerHTML = msg; 
+        pass1Element.style.background = invColor;
+        pass2Element.style.background = invColor;      
+        formValidity = false;
+        if(passwordMismatch){
+            usernameElement.style.background = "white";
+        }else{
+            usernameElement.style.background = invcolor;
+        }
+
+    }
+}
+
 //function to vaidate entier formValidatiy
 function validateForm(evt){
     if(evt.preventDefault){
@@ -339,6 +336,7 @@ function validateForm(evt){
     validateDeliveryDate();
     validatePayment();
     validateMessage();
+    validateCreateAccount()
 
     //Form is valid
     if(formValidity === true){
